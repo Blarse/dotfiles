@@ -9,8 +9,6 @@ export LS_COLORS="rs=0:di=38;5;33:ln=38;5;51:mh=00:pi=40;38;5;11:so=38;5;13:do=3
 
 export PS1='\[$(tput sgr0)\]╭[\[$(tput setaf 2)\]\u@\h\[$(tput sgr0)\]]:\[$(tput setaf 1)\]\w\[$(tput setaf 3)\]\[$(__git_ps1 " (%s)")\]\[$(tput sgr0)\]\n╰\\$\[$(tput sgr0)\]'
 
-
-
 . ~/.config/git-prompt.sh
 
 alias config='/usr/bin/git --git-dir=$HOME/work/config/repo --work-tree=$HOME'
@@ -18,14 +16,23 @@ alias config='/usr/bin/git --git-dir=$HOME/work/config/repo --work-tree=$HOME'
 
 alias diff='diff --color=auto'
 alias grep='grep --color=auto'
-alias ls='ls --color=auto'
+alias ls='ls -h --color=auto --group-directories-first'
 
 alias ll='ls -l'
 alias lsa='ls -Al'
+
+alias mkdir='mkdir -pv'
+
+
+alias ccat='highlight -O ansi --force'
 
 alias sl='ls'
 alias dc='cd'
 alias cd..='cd ..'
 
-alias g='git'
+alias ec='emacsclient'
 
+alias snano='sudo nano'
+
+alias g='git'
+alias gs='git status'
