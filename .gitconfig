@@ -1,0 +1,13 @@
+[user]
+	email = master.egor.ignatov@gmail.com
+	name = Egor Ignatov
+	signingkey = 250C19CF7C4E6335
+[commit]
+	gpgsign = true
+[alias]
+	s = status
+	d = diff
+	co = checkout
+	br = branch
+	last = log -1 HEAD
+	lo = log --oneline -n 10
