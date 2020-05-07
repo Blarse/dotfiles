@@ -11,7 +11,7 @@ export PS1='\[$(tput sgr0)\]╭[\[$(tput setaf 2)\]\u@\h\[$(tput sgr0)\]]:\[$(tp
 
 
 
-#. ~/.config/git-prompt.sh #TODO
+. ~/.config/git-prompt.sh
 
 alias config='/usr/bin/git --git-dir=$HOME/work/config/repo --work-tree=$HOME'
 
