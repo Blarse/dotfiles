@@ -1,0 +1,108 @@
+#+TITLE:Emacs Configuration File
+#+STARTUP: showall
+
+* Settings
+#+BEGIN_SRC emacs-lisp
+  ;; Stop Emacs from losing undo information by
+  ;; setting very high limits for undo buffers
+  (setq undo-limit 20000000)
+  (setq undo-strong-limit 40000000)
+
+  ;; Disable files~
+  (setq make-backup-files nil) 
+  ;; Disable #files#
+  (setq auto-save-default nil)
+
+  (setq frame-resize-pixelwise t)
+
+  (tooltip-mode    0)
+  (tool-bar-mode   0)
+  (menu-bar-mode   0)
+  (scroll-bar-mode 0)
+  (setq use-dialog-box nil)
+  (setq inhibit-startup-screen 1)
+
+  (fset 'yes-or-no-p 'y-or-n-p)
+  (global-unset-key [mouse-2])
+
+  (setq scroll-step 1)
+
+  (setq ring-bell-function 'ignore)
+
+  (display-time)
+
+  (global-hl-line-mode 1)
+
+
+#+END_SRC
+
+* Packages
+#+BEGIN_SRC emacs-lisp
+  (require 'cc-mode)
+  (require 'ido)
+  (require 'compile)
+
+  (use-package try
+    :ensure t)
+
+  (use-package which-key
+    :ensure t
+    :config (which-key-mode))
+
+  ;; Htmlize
+  (use-package htmlize
+    :ensure t)
+
+  ;; Ace-Window
+  (use-package ace-window
+    :ensure t
+    :init
+    (progn
+      (global-set-key [remap other-window] 'ace-window)
+      (custom-set-faces
+       '(aw-leading-char-face
+	 ((t (:inherit ace-jump-face-foreground :height 4.0 :foreground "#22FF22")))))
+      ))
+
+  ;; Org-Mode
+  (use-package org-bullets
+    :ensure t)
+
+  ;; Ido-Mode
+  (ido-mode 1)
+  (icomplete-mode t)
+  (setq ido-everywhere t)
+  (setq ido-virtual-buffers t)
+  (setq ido-enable-flex-matching t)
+  (defalias 'list-buffers 'ibuffer-other-window)
+
+  ;; Expand-Region
+  (use-package expand-region
+    :ensure t
+    :config
+    (global-set-key (kbd "C-=") 'er/expand-region))
+
+  (use-package smex
+    :ensure t
+    :config (progn (smex-initialize)
+		   (define-key global-map (kbd "M-x") 'smex)
+		   (define-key global-map (kbd "M-X") 'smex-major-mode-commands)))
+
+;  (setq mac-command-modifier 'meta)
+;  (setq mac-option-modifier 'control)
+#+END_SRC
+
+* Key Bindings
+#+BEGIN_SRC emacs-lisp
+;  (define-key global-map (kbd "C-n") 'previous-line)
+;  (define-key global-map (kbd "C-m") 'next-line)
+;  (define-key org-mode-map (kbd "C-m") 'next-line)
+;  (define-key global-map (kbd "C-i") 'backward-char)
+;  (define-key global-map (kbd "C-o") 'forward-char)
+#+END_SRC
+
+* Development
+#+BEGIN_SRC emacs-lisp
+  (use-package nasm-mode
+    :ensure t)
+#+END_SRC
