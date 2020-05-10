@@ -13,7 +13,7 @@ neofetch
 
 . ~/.config/git-prompt.sh
 
-alias config='/usr/bin/git --git-dir=$HOME/work/config.git --work-tree=$HOME'
+alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 
 
 alias diff='diff --color=auto'
