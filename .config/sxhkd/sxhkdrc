@@ -1,0 +1,5 @@
+super + shift + Return
+	$TERMINAL
+
+super + p
+	dmenu_run
