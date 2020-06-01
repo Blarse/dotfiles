@@ -1,6 +1,7 @@
 #+TITLE:Emacs Configuration File
 #+STARTUP: showall
 
+
 * Settings
 #+BEGIN_SRC emacs-lisp
   ;; Stop Emacs from losing undo information by
@@ -15,6 +16,7 @@
 
   (setq frame-resize-pixelwise t)
 
+  ;; Disable GUI
   (tooltip-mode    0)
   (tool-bar-mode   0)
   (menu-bar-mode   0)
@@ -31,10 +33,10 @@
 
   (display-time)
 
-  (global-hl-line-mode 1)
-
-
+  ;; (global-hl-line-mode 1)
+  (global-display-line-numbers-mode)
 #+END_SRC
+
 
 * Packages
 #+BEGIN_SRC emacs-lisp
@@ -49,11 +51,12 @@
     :ensure t
     :config (which-key-mode))
 
-  ;; Htmlize
+  (use-package magit
+    :ensure t)
+
   (use-package htmlize
     :ensure t)
 
-  ;; Ace-Window
   (use-package ace-window
     :ensure t
     :init
@@ -82,27 +85,42 @@
     :config
     (global-set-key (kbd "C-=") 'er/expand-region))
 
-  (use-package smex
-    :ensure t
-    :config (progn (smex-initialize)
-		   (define-key global-map (kbd "M-x") 'smex)
-		   (define-key global-map (kbd "M-X") 'smex-major-mode-commands)))
+;;  (use-package smex
+;;    :ensure t
+;;    :config (progn (smex-initialize)
+;;		   (define-key global-map (kbd "M-x") 'smex)
+;;		   (define-key global-map (kbd "M-X") 'smex-major-mode-commands)))
 
-;  (setq mac-command-modifier 'meta)
-;  (setq mac-option-modifier 'control)
+					  ;  (setq mac-command-modifier 'meta)
+					  ;  (setq mac-option-modifier 'control)
 #+END_SRC
+
 
 * Key Bindings
 #+BEGIN_SRC emacs-lisp
-;  (define-key global-map (kbd "C-n") 'previous-line)
-;  (define-key global-map (kbd "C-m") 'next-line)
-;  (define-key org-mode-map (kbd "C-m") 'next-line)
-;  (define-key global-map (kbd "C-i") 'backward-char)
-;  (define-key global-map (kbd "C-o") 'forward-char)
+  (define-key global-map (kbd "M-.") 'ace-window)
+  (define-key global-map (kbd "M-b") 'ido-switch-buffer)
+  (define-key global-map (kbd "M-B") 'ido-switch-buffer-other-window)
+  (define-key global-map (kbd "M-f") 'ido-find-file)
+  (define-key global-map (kbd "M-F") 'ido-find-file-other-window)
+  (unbind-key (kbd "C-x o") global-map)
+
+  ;  (define-key global-map (kbd "C-n") 'previous-line)
+  ;  (define-key global-map (kbd "C-m") 'next-line)
+  ;  (define-key org-mode-map (kbd "C-m") 'next-line)
+  ;  (define-key global-map (kbd "C-i") 'backward-char)
+  ;  (define-key global-map (kbd "C-o") 'forward-char)
 #+END_SRC
+
 
 * Development
 #+BEGIN_SRC emacs-lisp
   (use-package nasm-mode
-    :ensure t)
+	:ensure t)
+
+  (setq-default c-default-style "linux"
+			c-basic-offset 4
+			tab-width 4
+			indent-tabs-mode t)
+
 #+END_SRC
