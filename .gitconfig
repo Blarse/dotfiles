@@ -1,7 +1,7 @@
 [user]
 	email = master.egor.ignatov@gmail.com
 	name = Egor Ignatov
-	signingkey = 250C19CF7C4E6335
+	signingkey = B20874A6D1578890
 [commit]
 	gpgsign = true
 [alias]

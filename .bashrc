@@ -9,16 +9,11 @@ export LS_COLORS="rs=0:di=38;5;33:ln=38;5;51:mh=00:pi=40;38;5;11:so=38;5;13:do=3
 
 export PS1='\[$(tput sgr0)\]╭[\[$(tput setaf 2)\]\u@\h\[$(tput sgr0)\]]:\[$(tput setaf 1)\]\w\[$(tput setaf 3)\]\[$(__git_ps1 " (%s)")\]\[$(tput sgr0)\]\n╰\\$\[$(tput sgr0)\]'
 
-neofetch
-
 . ~/.config/git-prompt.sh
 
 alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 
-
-alias diff='diff --color=auto'
-alias grep='grep --color=auto'
-alias ls='ls -hXF --color=auto --group-directories-first'
+alias ls='ls -hF'
 
 alias ll='ls -l'
 alias lsa='ls -Al'
