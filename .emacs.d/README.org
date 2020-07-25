@@ -1,80 +1,46 @@
 #+TITLE:Emacs Configuration File
 #+STARTUP: showall
 
-
-* Settings
-#+BEGIN_SRC emacs-lisp
-  ;; Stop Emacs from losing undo information by
-  ;; setting very high limits for undo buffers
-  (setq undo-limit 20000000)
-  (setq undo-strong-limit 40000000)
-
-  ;; Disable files~
-  (setq make-backup-files nil) 
-  ;; Disable #files#
-  (setq auto-save-default nil)
-
-  (setq frame-resize-pixelwise t)
-
-  ;; Disable GUI
-  (tooltip-mode    0)
-  (tool-bar-mode   0)
-  (menu-bar-mode   0)
-  (scroll-bar-mode 0)
-  (setq use-dialog-box nil)
-  (setq inhibit-startup-screen 1)
-
-  (fset 'yes-or-no-p 'y-or-n-p)
-  (global-unset-key [mouse-2])
-
-  (setq scroll-step 1)
-
-  (setq ring-bell-function 'ignore)
-
-  (display-time)
-
-  ;; (global-hl-line-mode 1)
-  (global-display-line-numbers-mode)
-
-  (set-background-color "#002b36")
-  (set-foreground-color "#839496")
-#+END_SRC
+* TODO Req:
+  - Theme
+  - gtags/ctags
+  - key bindings
+  - Font
+  - dired
+  - magit
+  - auto complete
 
 
 * Packages
-#+BEGIN_SRC emacs-lisp
+  #+BEGIN_SRC emacs-lisp
   (require 'cc-mode)
-  (require 'ido)
   (require 'compile)
 
   (use-package try
-    :ensure t)
+	:ensure t)
 
   (use-package which-key
-    :ensure t
-    :config (which-key-mode))
+	:ensure t
+	:config (which-key-mode))
 
   (use-package magit
-    :ensure t)
+	:ensure t)
 
   (use-package htmlize
-    :ensure t)
+	:ensure t)
 
   (use-package ace-window
-    :ensure t
-    :init
-    (progn
-      (global-set-key [remap other-window] 'ace-window)
-      (custom-set-faces
-       '(aw-leading-char-face
-	 ((t (:inherit ace-jump-face-foreground :height 4.0 :foreground "#22FF22")))))
-      ))
+	:ensure t
+	:init
+	(progn
+	  (global-set-key [remap other-window] 'ace-window)))
 
   ;; Org-Mode
   (use-package org-bullets
-    :ensure t)
+	:ensure t)
 
   ;; Ido-Mode
+  (require 'ido)
   (ido-mode 1)
   (icomplete-mode t)
   (setq ido-everywhere t)
@@ -84,46 +50,135 @@
 
   ;; Expand-Region
   (use-package expand-region
-    :ensure t
-    :config
-    (global-set-key (kbd "C-=") 'er/expand-region))
+	:ensure t
+	:config
+	(global-set-key (kbd "C-=") 'er/expand-region))
 
-;;  (use-package smex
-;;    :ensure t
-;;    :config (progn (smex-initialize)
-;;		   (define-key global-map (kbd "M-x") 'smex)
-;;		   (define-key global-map (kbd "M-X") 'smex-major-mode-commands)))
+  (use-package nasm-mode
+	:ensure t)
 
-					  ;  (setq mac-command-modifier 'meta)
-					  ;  (setq mac-option-modifier 'control)
-#+END_SRC
+  (use-package ggtags
+	:ensure t)
+ 
+  #+END_SRC
+
+* Basic Settings
+  #+BEGIN_SRC emacs-lisp
+	(setq user-full-name "Egor Inatov"
+		  user-mail-address "mail.egor.ignatov@gmail.com")
+
+	;; Stop Emacs from losing undo information by
+	;; setting very high limits for undo buffers
+	(setq undo-limit 20000000)
+	(setq undo-strong-limit 40000000)
+
+	;; Backup files
+	(defvar local/backup-directory (concat user-emacs-directory "backups"))
+	(if (not (file-exists-p local/backup-directory))
+		(make-directory local/backup-directory t))
+
+	(setq backup-directory-alist local/backup-directory
+		  make-backup-files t
+		  delete-old-versions t
+		  backup-by-copying t
+		  kept-new-versions 6
+		  kept-old-versions 2
+		  version-control t)
+
+	;; Auto-save files
+	(setq auto-save-default t
+		  auto-save-timeout 20
+		  auto-save-interval 200)
+
+
+	(setq frame-resize-pixelwise t)
+
+	;; Disable GUI
+	(tooltip-mode    0)
+	(tool-bar-mode   0)
+	(menu-bar-mode   0)
+	(scroll-bar-mode 0)
+	(setq use-dialog-box nil)
+	(setq inhibit-startup-screen 1)
+
+	(fset 'yes-or-no-p 'y-or-n-p)
+	(global-unset-key [mouse-2])
+
+	(setq scroll-step 1)
+	(setq scroll-margin 6)
+	(setq ring-bell-function 'ignore)
+
+	(display-time)
+
+	(global-hl-line-mode 1)
+	(global-display-line-numbers-mode)
+  #+END_SRC
+
+* Theme
+  #+BEGIN_SRC emacs-lisp
+	(setq solarized-base03  "#002b36"
+		  solarized-base02  "#073642"
+		  solarized-base01  "#586e75"
+		  solarized-base00  "#657b83"
+		  solarized-base0   "#839496"
+		  solarized-base1   "#93a1a1"
+		  solarized-base2   "#eee8d5"
+		  solarized-base3   "#fdf6e3"
+		  solarized-yellow  "#b58900"
+		  solarized-orange  "#cb4b16"
+		  solarized-red     "#dc322f"
+		  solarized-magenta "#d33682"
+		  solarized-violet  "#6c71c4"
+		  solarized-blue    "#268bd2"
+		  solarized-cyan    "#2aa198"
+		  solarized-green   "#859900")
+
+	(add-to-list 'default-frame-alist '(font . "JetBrainsMono"))
+	(set-face-attribute 'default t :font "JetBrainsMono")
+
+
+	(set-background-color solarized-base03)
+	(set-foreground-color solarized-base0)
+	(set-face-attribute hl-line-face nil :background solarized-base02)
+	(set-face-attribute 'region nil :background solarized-base01)
+	(set-face-attribute 'highlight nil :background solarized-yellow)
+
+	(set-face-attribute font-lock-comment-face nil :foreground solarized-base01)
+	(set-face-attribute font-lock-doc-face nil :foreground solarized-base01)
+	(set-face-attribute font-lock-builtin-face nil :foreground solarized-cyan)
+	(set-face-attribute font-lock-reference-face nil :foreground solarized-orange)
+
+	(set-face-attribute font-lock-string-face nil :foreground solarized-green)
+	(set-face-attribute font-lock-keyword-face nil :foreground solarized-magenta)
+	(set-face-attribute font-lock-function-name-face nil :foreground solarized-blue)
+	(set-face-attribute font-lock-variable-name-face nil :foreground solarized-red)
+	(set-face-attribute font-lock-constant-face nil :foreground solarized-green)
+	(set-face-attribute font-lock-type-face nil :foreground solarized-violet)
+
+  #+END_SRC
 
 
 * Key Bindings
-#+BEGIN_SRC emacs-lisp
-  (define-key global-map (kbd "M-.") 'ace-window)
+  #+BEGIN_SRC emacs-lisp
+  (define-key global-map (kbd "C-t") 'ace-window)
+  (define-key org-mode-map (kbd "C-t") 'ace-window)
+
   (define-key global-map (kbd "M-b") 'ido-switch-buffer)
   (define-key global-map (kbd "M-B") 'ido-switch-buffer-other-window)
   (define-key global-map (kbd "M-f") 'ido-find-file)
   (define-key global-map (kbd "M-F") 'ido-find-file-other-window)
-  (unbind-key (kbd "C-x o") global-map)
+  (define-key global-map (kbd "M-s") 'save-buffer)
+  (define-key global-map (kbd "M-k") 'ido-kill-buffer)
 
-  ;  (define-key global-map (kbd "C-n") 'previous-line)
-  ;  (define-key global-map (kbd "C-m") 'next-line)
-  ;  (define-key org-mode-map (kbd "C-m") 'next-line)
-  ;  (define-key global-map (kbd "C-i") 'backward-char)
-  ;  (define-key global-map (kbd "C-o") 'forward-char)
-#+END_SRC
+  #+END_SRC
 
 
 * Development
-#+BEGIN_SRC emacs-lisp
-  (use-package nasm-mode
-	:ensure t)
+  #+BEGIN_SRC emacs-lisp
 
   (setq-default c-default-style "linux"
 			c-basic-offset 4
 			tab-width 4
 			indent-tabs-mode t)
 
-#+END_SRC
+  #+END_SRC
