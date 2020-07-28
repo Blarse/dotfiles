@@ -1,5 +1,8 @@
-super + shift + Return
-	$TERMINAL
+XF86AudioRaiseVolume
+	pulsemixer --change-volume +10
 
-super + p
-	dmenu_run
+XF86AudioLowerVolume
+	pulsemixer --change-volume -10
+
+XF86AudioMute
+	pulsemixer --toggle-mute

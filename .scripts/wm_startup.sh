@@ -1,10 +1,9 @@
 #!/bin/bash
 
 nitrogen --restore &
+sxhkd &
 firefox &
-emacs &
+#emacs &
 yandex-music &
 
 alacritty --class ws3 &
-#sxhkd &
-

@@ -11,7 +11,7 @@ neofetch
 
 . ~/.config/git-prompt.sh
 
-alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
+alias dots='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 
 
 alias diff='diff --color=auto'
@@ -38,3 +38,5 @@ alias snano='sudo nano'
 
 alias g='git'
 alias gs='git status'
+
+export QSYS_ROOTDIR="/home/egor/.local/opt/intelFPGA_lite/20.1/quartus/sopc_builder/bin"
