@@ -2,7 +2,7 @@
 
 nitrogen --restore &
 sxhkd &
-firefox &
+firefox --browser &
 #emacs &
 yandex-music &
 

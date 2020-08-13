@@ -13,9 +13,6 @@
  ;; If there is more than one, they won't work right.
  '(aw-leading-char-face ((t (:inherit ace-jump-face-foreground :height 4.0 :foreground "#22FF22")))))
 
-;; (org-babel-load-file (concat (file-name-directory (or buffer-file-name load-file-name)) "README.org"))
-
-
 (require 'package)
 
 (setq package-enable-at-startup nil)
@@ -161,8 +158,9 @@
 
 (size-indication-mode)
 
-(setq display-line-numbers-type 'visual)
-(setq-default display-line-numbers-width 3)
+(setq display-line-numbers-type 'relative)
+;;(setq display-line-numbers-type 'visual)
+(setq-default display-line-numbers-width 2)
 (global-display-line-numbers-mode)
 
 (show-paren-mode t)
@@ -206,6 +204,7 @@
 	(yank-pop -1))
 
 (defun format-current-buffer()
+	(interactive)
 	(indent-region (point-min) (point-max)))
 
 (defun tabify-current-buffer()
@@ -213,11 +212,18 @@
 			(tabify (point-min) (point-max)))
 	nil)
 
+(defun obar/kill-region-or-backward-word ()
+	(interactive)
+	(if (region-active-p)
+			(kill-region (region-beginning) (region-end))
+		(backward-kill-word 1)))
+
+
+
 ;; =======
 ;;	Hooks
 ;; =======
 
-(add-hook 'before-save-hook 'format-current-buffer)
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 (add-hook 'before-save-hook 'tabify-current-buffer)
 
@@ -230,6 +236,9 @@
 
 (define-key global-map (kbd "C-t") 'ace-window)
 (define-key org-mode-map (kbd "C-t") 'ace-window)
+
+(global-set-key (kbd "C-w") 'obar/kill-region-or-backward-word)
+
 
 (define-key global-map (kbd "M-b") 'ido-switch-buffer)
 (define-key global-map (kbd "M-B") 'ido-switch-buffer-other-window)
