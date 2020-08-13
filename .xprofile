@@ -1,0 +1,3 @@
+
+
+[[ -f $HOME/.scripts/wm_startup.sh ]] && . $HOME/.scripts/wm_startup.sh
