@@ -8,6 +8,7 @@ export VISUAL="emacsclient -c -a emacs"         # $VISUAL opens in GUI mode
 
 (switch-to-buffer "*scratch*")
 [[ -f ~/.bashrc ]] && . ~/.bashrc
+
 #[[ -f ~/.scripts/wm_startup.sh ]] && . ~/.scripts/wm_startup.sh
 
 #eval `ssh-agent -s`
@@ -17,4 +18,4 @@ export VISUAL="emacsclient -c -a emacs"         # $VISUAL opens in GUI mode
 #setxkbmap -model pc140 -layout us,ru -variant colemak, -option grp:win_space_toggle
 #setxkbmap -model pc104 -layout us,ru -variant ,phonetic -option grp:win_space_toggle
 
-export QSYS_ROOTDIR="/home/egor/.local/opt/intelFPGA_lite/20.1/quartus/sopc_builder/bin"
+#export QSYS_ROOTDIR="/home/egor/.local/opt/intelFPGA_lite/20.1/quartus/sopc_builder/bin"

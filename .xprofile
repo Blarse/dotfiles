@@ -1,3 +1,2 @@
 
-
-[[ -f $HOME/.scripts/wm_startup.sh ]] && . $HOME/.scripts/wm_startup.sh
+#[[ -f $HOME/.scripts/wm_startup.sh ]] && . $HOME/.scripts/wm_startup.sh

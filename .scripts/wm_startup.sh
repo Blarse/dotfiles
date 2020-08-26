@@ -1,9 +1,10 @@
 #!/bin/bash
 
 nitrogen --restore &
-sxhkd &
+#sxhkd &
 firefox --browser &
-#emacs &
-yandex-music &
+xmodmap /home/egor/.Xmodmap &
+emacs &
+#yandex-music &
 
 alacritty --class ws3 &
