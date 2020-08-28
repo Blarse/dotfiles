@@ -11,6 +11,7 @@ neofetch
 
 . ~/.config/git-prompt.sh
 
+
 alias dots='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 
 
@@ -29,6 +30,8 @@ alias ccat='highlight -O ansi --force'
 alias sl='ls'
 alias dc='cd'
 alias cd..='cd ..'
+alias ..='cd ..'
+alias ...='cd ../..'
 
 alias ec='emacsclient'
 alias emm='emacs -q -l $HOME/work/config/.emacs.d/init.el'
@@ -48,3 +51,5 @@ if [ "$TERM" = "linux" ]; then
 	clear
 	sudo fbset -a -g 1920 1080 1920 1080 32
 fi
+
+eval $(keychain --agents gpg,ssh --eval --quiet github)
