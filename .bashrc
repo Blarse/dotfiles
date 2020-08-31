@@ -17,13 +17,14 @@ alias dots='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 
 alias diff='diff --color=auto'
 alias grep='grep --color=auto'
-alias ls='ls -hXF --color=auto --group-directories-first'
 
-alias ll='ls -l'
-alias lsa='ls -Al'
+alias ls='exa -bF --group-directories-first'
+alias lsa='exa -Fl -a -s name --group-directories-first -bhg --git'
+alias ll='exa -Fl -s name --group-directories-first -bhg --git'
+alias la='exa -Fl -a -s name --group-directories-first -bghHiS --git'
+
 
 alias mkdir='mkdir -pv'
-
 
 alias ccat='highlight -O ansi --force'
 
@@ -46,10 +47,12 @@ export QSYS_ROOTDIR="/home/egor/.local/opt/intelFPGA_lite/20.1/quartus/sopc_buil
 
 
 
-if [ "$TERM" = "linux" ]; then 
+if [ "$TERM" = "linux" ]; then
 	/bin/echo -e "\e]P0002b36 \e]P1dc322f \e]P2859900 \e]P3b58900 \e]P4268bd2 \e]P56c71c4 \e]P62aa198 \e]P793a1a1 \e]P8657b83 \e]P9dc322f \e]PA859900 \e]PBb58900 \e]PC268bd2 \e]PD6c71c4 \e]PE2aa198 \e]PFfdf6e3"
 	clear
 	sudo fbset -a -g 1920 1080 1920 1080 32
 fi
 
+export GPG_TTY=$(tty)
+gpg-connect-agent updatestartuptty /bye >/dev/null
 eval $(keychain --agents gpg,ssh --eval --quiet github)
