@@ -4,7 +4,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(evil evil-mode ggtags magit swiper ivy helm nasm-mode smex expand-region org-bullets ace-window htmlize which-key try use-package)))
+   '(ggtags magit swiper ivy nasm-mode smex expand-region org-bullets ace-window htmlize which-key try use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -35,8 +35,8 @@
 (use-package magit
 	:ensure t)
 
-(use-package helm
-	:ensure t)
+;;(use-package helm
+;;	:ensure t)
 
 (use-package ggtags
 	:ensure t)
@@ -50,7 +50,10 @@
 ;;(use-package helm
 ;;	:ensure t)
 
-(use-package evil
+;;(use-package evil
+;;	:ensure t)
+
+(use-package avy
 	:ensure t)
 
 (use-package try
@@ -101,6 +104,9 @@
 ;; evil
 ;; (evil-mode 1)
 
+;; Dynamic
+(global-set-key (kbd "<tab>") 'dabbrev-expand)
+(global-set-key (kbd "C-<tab>") 'indent-for-tab-command)
 
 ;; ================
 ;;	Emacs Settings
@@ -115,11 +121,18 @@
 (defun is-windows()
 	(string-equal system-type "windows-nt"))
 
+(defun is-macos()
+	(string-equal system-type "darwin"))
+
 ;; Start Emacs Server
 (when (is-linux)
 	(require 'server)
 	(unless (server-running-p)
 		(server-start)))
+
+(when (is-macos)
+	(setq mac-option-modifier 'super)
+	(setq mac-command-modifier 'meta))
 
 ;; Stop Emacs from losing information
 (setq undo-limit 20000000
@@ -161,7 +174,7 @@
 
 (size-indication-mode)
 
-(setq display-line-numbers-type 'relative)
+(setq display-line-numbers-type 't)
 ;;(setq display-line-numbers-type 'visual)
 (setq-default display-line-numbers-width 2)
 (global-display-line-numbers-mode)
@@ -195,7 +208,7 @@
 
 
 (electric-pair-mode 1)
-(electric-indent-mode -1)
+(electric-indent-mode 1)
 
 
 ;; ==================
@@ -221,6 +234,23 @@
 			(kill-region (region-beginning) (region-end))
 		(backward-kill-word 1)))
 
+(defun smarter-move-beginning-of-line (arg)
+  (interactive "^p")
+  (setq arg (or arg 1))
+
+  ;; Move lines first
+  (when (/= arg 1)
+	(let ((line-move-visual nil))
+	  (forward-line (1- arg))))
+
+  (let ((orig-point (point)))
+	(back-to-indentation)
+	(when (= orig-point (point))
+	  (move-beginning-of-line 1))))
+
+;; remap C-a to `smarter-move-beginning-of-line'
+(global-set-key [remap move-beginning-of-line]
+				'smarter-move-beginning-of-line)
 
 
 ;; =======
@@ -241,7 +271,9 @@
 (define-key org-mode-map (kbd "C-t") 'ace-window)
 
 (global-set-key (kbd "C-w") 'obar/kill-region-or-backward-word)
+(global-set-key (kbd "M-m") 'compile)
 
+(global-set-key (kbd "C-'") 'avy-goto-char-timer)
 
 (define-key global-map (kbd "M-b") 'ido-switch-buffer)
 (define-key global-map (kbd "M-B") 'ido-switch-buffer-other-window)
@@ -284,14 +316,21 @@
 	  solarized-cyan	"#2aa198"
 	  solarized-green	"#859900")
 
-(add-to-list 'default-frame-alist '(font . "JetBrainsMono"))
-(set-face-attribute 'default t :font "JetBrainsMono")
+(when (is-macos)
+	(add-to-list 'default-frame-alist '(font . "JetBrains Mono"))
+	(set-face-attribute 'default t :font "JetBrains Mono")
+)
+(when (is-linux)
+	(add-to-list 'default-frame-alist '(font . "JetBrainsMono"))
+	(set-face-attribute 'default t :font "JetBrainsMono")
+)
 
 
 (set-background-color solarized-base03)
 (set-foreground-color solarized-base0)
 (set-face-attribute hl-line-face nil :background solarized-base02)
 (set-face-attribute 'region nil :background solarized-base01)
+(set-face-attribute 'show-paren-match nil :background solarized-base01)
 (set-face-attribute 'highlight nil :background solarized-yellow)
 
 (set-face-attribute 'line-number-current-line nil :foreground solarized-base1)
