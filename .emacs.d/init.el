@@ -35,8 +35,8 @@
 (use-package magit
 	:ensure t)
 
-;;(use-package helm
-;;	:ensure t)
+(use-package helm
+	:ensure t)
 
 (use-package ggtags
 	:ensure t)
@@ -52,6 +52,9 @@
 
 ;;(use-package evil
 ;;	:ensure t)
+
+(use-package avy
+	:ensure t)
 
 (use-package try
 	:ensure t)
@@ -249,14 +252,6 @@
 (global-set-key [remap move-beginning-of-line]
 				'smarter-move-beginning-of-line)
 
-
-;; =======
-;;	Hooks
-;; =======
-
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
-(add-hook 'before-save-hook 'tabify-current-buffer)
-
 ;; =====================
 ;;	Global Map Bindings
 ;; =====================
@@ -269,6 +264,9 @@
 
 (global-set-key (kbd "C-w") 'obar/kill-region-or-backward-word)
 (global-set-key (kbd "M-m") 'compile)
+
+(global-set-key (kbd "C-'") 'avy-goto-char-timer)
+(global-set-key (kbd "M-/") 'comment-line)
 
 (define-key global-map (kbd "M-b") 'ido-switch-buffer)
 (define-key global-map (kbd "M-B") 'ido-switch-buffer-other-window)
@@ -290,53 +288,57 @@
 			  standart-indent 4
 			  lisp-body-indent 4)
 
-
 ;; ================
 ;;	Faces Settings
 ;; ================
-(setq solarized-base03	"#002b36"
-	  solarized-base02	"#073642"
-	  solarized-base01	"#586e75"
-	  solarized-base00	"#657b83"
-	  solarized-base0	"#839496"
-	  solarized-base1	"#93a1a1"
-	  solarized-base2	"#eee8d5"
-	  solarized-base3	"#fdf6e3"
-	  solarized-yellow	"#b58900"
-	  solarized-orange	"#cb4b16"
-	  solarized-red		"#dc322f"
-	  solarized-magenta "#d33682"
-	  solarized-violet	"#6c71c4"
-	  solarized-blue	"#268bd2"
-	  solarized-cyan	"#2aa198"
-	  solarized-green	"#859900")
 
-(add-to-list 'default-frame-alist '(font . "JetBrains Mono"))
-(set-face-attribute 'default t :font "JetBrains Mono")
+(defun set-theme-1 ()
+	"Theme1"
+
+	(when (is-macos)
+		(add-to-list 'default-frame-alist '(font . "JetBrains Mono"))
+		(set-face-attribute 'default t :font "JetBrains Mono")
+		)
+	(when (is-linux)
+		(add-to-list 'default-frame-alist '(font . "JetBrainsMono"))
+		(set-face-attribute 'default t :font "JetBrainsMono")
+		)
+
+	(set-background-color "Gray12")
+	(set-foreground-color "Gray80")
+	(set-cursor-color "chartreuse3")
+
+	(set-face-attribute hl-line-face nil :background "Gray15")
+	(set-face-attribute 'region nil :background "Gray30")
+	(set-face-attribute 'show-paren-match nil :background "Gray40")
+
+	(set-face-attribute 'highlight nil :background "Gray35")
+
+	;; frame faces
+	(set-face-attribute 'fringe nil :foreground "Gray100")
+	(set-face-attribute 'vertical-border nil :foreground "Gray100")
+	;;
+	(set-face-attribute 'line-number-current-line nil :foreground "Gray90")
+	(set-face-attribute 'line-number nil :foreground "Gray30")
 
 
-(set-background-color solarized-base03)
-(set-foreground-color solarized-base0)
-(set-face-attribute hl-line-face nil :background solarized-base02)
-(set-face-attribute 'region nil :background solarized-base01)
-(set-face-attribute 'show-paren-match nil :background solarized-base01)
-(set-face-attribute 'highlight nil :background solarized-yellow)
+	;; font lock
+	(set-face-attribute font-lock-comment-face nil :foreground "Gray50")
+	(set-face-attribute font-lock-doc-face nil :foreground "Gray50")
 
-(set-face-attribute 'line-number-current-line nil :foreground solarized-base1)
-(set-face-attribute 'line-number nil :foreground solarized-base01)
 
-(set-face-attribute font-lock-comment-face nil :foreground solarized-base01)
-(set-face-attribute font-lock-doc-face nil :foreground solarized-base01)
-(set-face-attribute font-lock-builtin-face nil :foreground solarized-cyan)
-(set-face-attribute font-lock-reference-face nil :foreground solarized-orange)
+	(set-face-attribute font-lock-builtin-face nil :foreground "turquoise")
 
-(set-face-attribute font-lock-string-face nil :foreground solarized-green)
-(set-face-attribute font-lock-keyword-face nil :foreground solarized-magenta)
-(set-face-attribute font-lock-function-name-face nil :foreground solarized-blue)
-(set-face-attribute font-lock-variable-name-face nil :foreground solarized-red)
-(set-face-attribute font-lock-constant-face nil :foreground solarized-green)
-(set-face-attribute font-lock-type-face nil :foreground solarized-violet)
+	(set-face-attribute font-lock-constant-face nil :foreground "DarkGreen")
+	(set-face-attribute font-lock-string-face nil :foreground "firebrick")
 
+	(set-face-attribute font-lock-keyword-face nil :foreground "tan1")
+	(set-face-attribute font-lock-variable-name-face nil :foreground "chocolate")
+	(set-face-attribute font-lock-type-face nil :foreground "burlywood2")
+	(set-face-attribute font-lock-function-name-face nil :foreground "LightSalmon")
+	)
+
+(set-theme-1)
 
 ;; ===========
 ;;	Encodings
@@ -363,3 +365,15 @@
 		(setq file-name-coding-system 'windows-1251)
 		(setq-default coding-system-for-read 'windows-1251)
 		(setq default-buffer-file-coding-system 'windows-1251)))
+
+
+;; =======
+;;	Hooks
+;; =======
+
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+(add-hook 'before-save-hook 'tabify-current-buffer)
+
+(add-hook 'after-make-frame-functions (lambda (frame)
+										  (select-frame frame)
+										  (set-theme-1)))
