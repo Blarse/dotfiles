@@ -83,28 +83,15 @@ def start_once():
 
 keys = [
     Key("M-m", lazy.group.setlayout("max"), desc="go to max layout"),
-    Key("M-t", lazy.group.setlayout("tile"), desc="go to tile layout"),
-    # Switch between windows
-    Key("M-b", lazy.layout.left(), desc="Move focus to left"),
-    Key("M-f", lazy.layout.right(), desc="Move focus to right"),
-    #Key("M-n", lazy.layout.down(), desc="Move focus down"),
-    Key("M-p", lazy.layout.up(), desc="Move focus up"),
 
     Key("M-t", lazy.layout.down(), desc="Move focus down"),
-    
-    # Key("M-S-n", lazy.layout.grow_down(),
-    #     desc="Grow window down"),
-    # Key("M-S-p", lazy.layout.grow_up(),
-    #     desc="Grow window up"),
-    Key("M-S-n", lazy.layout.swap_column_left()),
-    Key("M-S-p", lazy.layout.swap_column_right()),
-    Key("M-C-<Return>", lazy.layout.toggle_split()),
-    Key("M-r", lazy.layout.normalize(), desc="Reset all window sizes"),
+
     Key(
         "M-S-<Return>",
         lazy.spawn("rofi -monitor -1 -show combi"),
         desc="Spawn rofi application launcher",
     ),
+
     Key("M-<Return>", lazy.spawn(terminal), desc="Launch terminal"),
     Key("M-<Tab>", lazy.screen.toggle_group(), desc="Toggle between last groups"),
     Key("M-<space>", lazy.next_layout()),
