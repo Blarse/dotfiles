@@ -3,7 +3,7 @@
 # Config
 monlayout.sh top
 #xmodmap ~/.Xmodmap &
-~/.fehbg
+#~/.fehbg
 
 # Daemons
 syndaemon -K -i 0.8 -R -d -t &

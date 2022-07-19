@@ -52,6 +52,7 @@ terminal = guess_terminal("kitty")
 browser = "firefox"
 
 HOME = os.path.expanduser("~")
+wallpaper = f"{HOME}/.wallpaper/luca-micheli-ruWkmt3nU58-unsplash.jpg"
 
 
 @lazy.function
@@ -83,15 +84,12 @@ def start_once():
 
 keys = [
     Key("M-m", lazy.group.setlayout("max"), desc="go to max layout"),
-
     Key("M-t", lazy.layout.down(), desc="Move focus down"),
-
     Key(
         "M-S-<Return>",
         lazy.spawn("rofi -monitor -1 -show combi"),
         desc="Spawn rofi application launcher",
     ),
-
     Key("M-<Return>", lazy.spawn(terminal), desc="Launch terminal"),
     Key("M-<Tab>", lazy.screen.toggle_group(), desc="Toggle between last groups"),
     Key("M-<space>", lazy.next_layout()),
@@ -115,7 +113,6 @@ layout_theme = {
 
 COLOR_BG = "#161F38"
 COLOR_FG = "#FFFFFF"
-
 
 layouts = [
     layout.Tile(name="tile", ratio=0.5, **layout_theme),
@@ -236,6 +233,7 @@ colors = [
     ["#a9a1e1", "#a9a1e1"],
 ]
 
+
 checkmail_widget = widget.GenPollText(
     name="checkmails",
     background=colors[1],
@@ -282,7 +280,7 @@ def init_widgets_list():
             fontsize=14,
         ),
         widget.CurrentLayoutIcon(
-            custom_icon_paths=[os.path.expanduser("~/.config/qtile/icons")],
+            custom_icon_paths=[os.path.expanduser(f"{HOME}/.config/qtile/icons")],
             foreground=colors[2],
             background=colors[0],
             padding=0,
@@ -311,9 +309,9 @@ def init_widgets_list():
         widget.Memory(
             foreground=colors[1],
             background=colors[6],
-            mouse_callbacks={"Button1": lambda: qtile.cmd_spawn(myTerm + " -e htop")},
             fmt="Mem: {}",
             padding=5,
+            update_interval=2,
         ),
         widget.Volume(
             foreground=colors[1], background=colors[7], fmt="Vol: {}", padding=5
@@ -333,39 +331,19 @@ def init_widgets_list():
     return widgets_list
 
 
-def init_screens():
-    return [
-        Screen(top=bar.Bar(widgets=init_widgets_list(), opacity=1.0, size=20)),
-        Screen(top=bar.Bar(widgets=init_widgets_list(), opacity=1.0, size=20)),
-    ]
+screens = [
+    Screen(
+        top=bar.Bar(widgets=init_widgets_list(), opacity=1.0, size=20),
+        wallpaper=wallpaper,
+        wallpaper_mode="fill",
+    ),
+    Screen(
+        top=bar.Bar(widgets=init_widgets_list(), opacity=1.0, size=20),
+        wallpaper=wallpaper,
+        wallpaper_mode="fill",
+    ),
+]
 
-
-def window_to_prev_group(qtile):
-    if qtile.currentWindow is not None:
-        i = qtile.groups.index(qtile.currentGroup)
-        qtile.currentWindow.togroup(qtile.groups[i - 1].name)
-
-
-def window_to_next_group(qtile):
-    if qtile.currentWindow is not None:
-        i = qtile.groups.index(qtile.currentGroup)
-        qtile.currentWindow.togroup(qtile.groups[i + 1].name)
-
-
-def switch_screens(qtile):
-    i = qtile.screens.index(qtile.current_screen)
-    group = qtile.screens[i - 1].group
-    qtile.current_screen.set_group(group)
-
-
-if __name__ in ["config", "__main__"]:
-    screens = init_screens()
-    # widgets_list = init_widgets_list()
-    # widgets_screen1 = init_widgets_screen1()
-    # widgets_screen2 = init_widgets_screen2()
-
-
-# Drag floating layouts.
 mouse = [
     Drag(
         [mod],
@@ -379,38 +357,32 @@ mouse = [
     Click([mod], "Button2", lazy.window.toggle_floating()),
 ]
 
-dgroups_key_binder = None
-dgroups_app_rules = []  # type: List
-follow_mouse_focus = False
-bring_front_click = False
-cursor_warp = False
 floating_layout = layout.Floating(
+    border_width=3,
+    border_focus="#FF0000",
+    border_normal="#000000",
+    fullscreen_border_width=0,
+    max_border_width=0,
     float_rules=[
-        # Run the utility of `xprop` to see the wm class and name of an X client.
         *layout.Floating.default_float_rules,
         Match(wm_class="confirmreset"),  # gitk
         Match(wm_class="makebranch"),  # gitk
         Match(wm_class="maketag"),  # gitk
         Match(wm_class="ssh-askpass"),  # ssh-askpass
+        Match(wm_class="graphics"),
         Match(title="branchdialog"),  # gitk
         Match(title="pinentry"),  # GPG key password entry
-    ]
+    ],
 )
+
+# dgroups_key_binder = None
+# dgroups_app_rules = []
+
 auto_fullscreen = True
-# focus_on_window_activation = "smart"
-focus_on_window_activation = "smart"
-reconfigure_screens = True
-
-# If things like steam games want to auto-minimize themselves when losing
-# focus, should we respect this or not?
 auto_minimize = True
-
-# XXX: Gasp! We're lying here. In fact, nobody really uses or cares about this
-# string besides java UI toolkits; you can see several discussions on the
-# mailing lists, GitHub issues, and other WM documentation that suggest setting
-# this string if your java app doesn't work correctly. We may as well just lie
-# and say that we're a working one by default.
-#
-# We choose LG3D to maximize irony: it is a 3D non-reparenting WM written in
-# java that happens to be on java's whitelist.
-wmname = "LG3D"
+bring_front_click = True
+cursor_warp = False
+focus_on_window_activation = "smart"
+follow_mouse_focus = True
+reconfigure_screens = True
+wmname = "qtile"
