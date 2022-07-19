@@ -1,0 +1,45 @@
+[user]
+	name = Egor Ignatov
+	email = egori@altlinux.org
+	signingkey = DB21C97B6BDF202A
+[commit]
+	gpgsign = true
+[alias]
+	s = status
+	d = diff
+	co = checkout
+	br = branch
+	last = log -p -1 HEAD
+	lo = log --oneline -n 10
+	flo = !git log --oneline | fzf --height=100% --preview 'git -c color.diff=always show -p {1} | bat --style=numbers --color=always -l gitlog'
+	graph = log --oneline --graph
+	diffs = diff --staged
+	diffb = diff --staged --worktree
+	restores = restore --staged
+	amend = commit --amend
+	amendn = commit --amend --no-edit
+	fgrep = grep -F
+	egrep = grep -E
+	tags = tag --sort=-creatordate
+[gpg]
+	program = gpg2
+[core]
+#	pager = less -FRSX
+	pager = bat -l gitlog -p
+[sendemail]
+	smtpencryption = tls
+	smtp-auth = PLAIN
+	smtpserver = air.basealt.ru
+	smtpuser = egori
+	smtpserverport = 25
+	suppresscc = self
+[diff]
+	tool = kitty
+	guitool = kitty.gui
+[difftool]
+	prompt = false
+	trustExitCode = true
+[difftool "kitty"]
+	cmd = kitty +kitten diff $LOCAL $REMOTE
+[difftool "kitty.gui"]
+	cmd = kitty kitty +kitten diff $LOCAL $REMOTE
