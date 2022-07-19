@@ -1,0 +1,13 @@
+layout tall
+cd ~
+launch bash
+
+new_tab dev
+cd ~/dev
+
+
+new_os_window
+os_window_class kitty_emacs_window
+
+focus
+launch emacs -nw
