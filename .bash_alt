@@ -1,0 +1,47 @@
+#!/bin/bash
+export PATH="$PATH:$HOME/.altdev"
+
+function gyle {
+    local tmpout taskid
+
+    tmpout=$(mktemp -q)
+    ssh gyle -- "$@" 2>&1 | tee $tmpout | sed -E "s/#([0-9]{6})/\1/"
+
+    taskid=$(grep -Eo '(#|id=)[0-9]{6}' "$tmpout" | head -n1 | tr -cd '[:digit:]')
+    if [ -n "$taskid" ]; then
+        echo -n "$taskid" > ~/.gyle-last-task
+        echo -n "$taskid" | xclip -sel clip
+    fi
+    mv -f $tmpout ~/.gyle-last 1>/dev/null 2>&1
+}
+
+function taskff {
+    taskid="${1:-}"
+	[ -z "$taskid" -a -s ~/.gyle-last-task ] && taskid=$(head -c6 ~/.gyle-last-task)
+    [ -n "$taskid" ] || return
+    [ "$(curl -LIs -o /dev/null -w "%{http_code}" "http://git.altlinux.org/tasks/$taskid" 2>/dev/null)" == "200" ] || return
+    firefox "http://git.altlinux.org/tasks/$taskid"
+}
+
+alias gitery='ssh gitery'
+
+alias upgrade='sudo apt-get update && sudo apt-get dist-upgrade'
+
+alias a='alt'
+alias ab='alt build'
+
+alias log='alt log'
+
+### OLD:
+
+#alias gear-build-remote='gear-remote-hsh -v --commit --no-sisyphus-check --lazy-cleanup -v --apt-config="/home/egori/.hasher/apt.conf" shell /home/egori/hasher 2>&1 | tee $HOME/alt/logs/$(basename $(pwd))-build.log'
+#alias gear-build-remote-i586='gear-remote-hsh --target=i586 -v --commit --no-sisyphus-check --lazy-cleanup -v --apt-config="/home/egori/.hasher/apt-i586.conf" shell /home/egori/hasher 2>&1 | tee $HOME/alt/logs/$(basename $(pwd))-build.log'
+#alias gear-build-remote-sisyphus='gear-remote-hsh -v --commit --no-sisyphus-check --lazy-cleanup -v --apt-config="/home/egori/.hasher/apt-sisyphus.conf" shell /home/egori/hasher 2>&1 | tee $HOME/alt/logs/$(basename $(pwd))-build.log'
+#alias gear-build-remote-i586-sisyphus='gear-remote-hsh -v --commit --no-sisyphus-check --lazy-cleanup -v --apt-config="/home/egori/.hasher/apt-i586-sisyphus.conf" shell /home/egori/hasher 2>&1 | tee $HOME/alt/logs/$(basename $(pwd))-build.log'
+
+#alias gbr='gear-build-remote'
+#alias gbri='gear-build-remote-i586'
+#alias gbrs='gear-build-remote-sisyphus'
+#alias gbris='gear-build-remote-i586-sisyphus'
+
+#alias log='bat $HOME/alt/logs/$(gear --describe | cut -d" " -f1)-build.log'

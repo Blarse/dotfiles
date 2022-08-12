@@ -1,0 +1,31 @@
+# Cool stuff with fzf
+
+
+FZF_DEFAULT_OPTS=
+
+
+
+
+# gyle task ls select 
+
+#gyle task ls --user=ALL --state=BUILDING | fzf --preview-window=70% --preview 'ssh gyle task show {1}| bat --style=numbers --color=always -l log'
+
+
+
+select_task() {
+  gyle task ls | fzf --reverse --preview-window=70% --preview 'ssh gyle task show {1}' | cut -d' ' -f 1
+}
+
+show_task() {
+  gyle task show "$@" $(select_task)
+}
+
+# fzf-git: https://junegunn.kr/2016/07/fzf-git/
+
+
+# Will return non-zero status if the current directory is not managed by git
+is_in_git_repo() {
+  git rev-parse HEAD > /dev/null 2>&1
+}
+
+
