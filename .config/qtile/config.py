@@ -26,6 +26,9 @@
 
 from typing import List  # noqa: F401
 
+import sys
+import importlib
+
 from libqtile import bar, layout, widget, hook
 from libqtile.layout.slice import Single
 from libqtile.config import (
@@ -47,12 +50,145 @@ from libqtile.log_utils import logger
 import os
 import subprocess
 
+
+def reload(module):
+    if module in sys.modules:
+        importlib.reload(sys.modules[module])
+
+
+reload("widgets")
+import widgets
+
+
 mod = "mod4"
 terminal = guess_terminal("kitty")
 browser = "firefox"
 
 HOME = os.path.expanduser("~")
-wallpaper = f"{HOME}/.wallpaper/luca-micheli-ruWkmt3nU58-unsplash.jpg"
+# wallpaper = "/usr/share/wallpapers/AltEmeraldBlueStream/contents/images/3840x2160.png"
+wallpaper = "/usr/share/wallpapers/AltMorningMist/contents/images/3840x2160.png"
+
+theme = dict(
+    foreground="#FFC745",
+    background="#003B3A",
+    color0="#04D9C4",
+    color1="#15038C",
+    color2="#1D0259",
+    color3="#074A59",
+    color4="#067373",
+    color5="#110273",
+    color6="#FF0000",
+    color7="#FF0000",
+    color8="#ff6c6b",
+    color9="#98be65",
+    color10="#da8548",
+    color11="#51afef",
+    color12="#c678dd",
+    color13="#46d9ff",
+    color14="#a9a1e1",
+    color15="#FF0000",
+)
+
+colors = [theme[f"color{n}"] for n in range(16)]
+background = theme["background"]
+foreground = theme["foreground"]
+color_focussed = "#6fa3e0"
+color_unfocussed = "#0e101c"
+
+border_focus = [colors[5]]
+border_normal = "#001122"
+
+inner_gaps = 8
+outer_gaps = 0
+
+mouse = [
+    Drag(
+        [mod],
+        "Button1",
+        lazy.window.set_position_floating(),
+        start=lazy.window.get_position(),
+    ),
+    Drag(
+        [mod], "Button3", lazy.window.set_size_floating(), start=lazy.window.get_size()
+    ),
+    Click([mod], "Button2", lazy.window.toggle_floating()),
+]
+
+
+layout_theme = {
+    "border_width": 2,
+    "margin": 8,
+    "border_focus": "e1acff",
+    "border_normal": "1D2330",
+}
+
+layouts = [
+    layout.Tile(
+        name="tile",
+        ratio=0.5,
+        border_on_single=False,
+        margin_on_single=False,
+        border_width=2,
+        margin=0,
+        border_focus="e1acff",
+        border_normal="1D2330",
+    ),
+    layout.Max(name="max"),
+]
+
+floating_layout = layout.Floating(
+    border_width=3,
+    border_focus="#FF0000",
+    border_normal="00000000",
+    fullscreen_border_width=0,
+    max_border_width=0,
+    float_rules=[
+        *layout.Floating.default_float_rules,
+        Match(wm_class="confirmreset"),  # gitk
+        Match(wm_class="makebranch"),  # gitk
+        Match(wm_class="maketag"),  # gitk
+        Match(wm_class="ssh-askpass"),  # ssh-askpass
+        Match(title="branchdialog"),  # gitk
+        Match(title="pinentry"),  # GPG key password entry
+        # can be removed:
+        Match(title="Capturing"),
+        Match(wm_class="graphics"),
+    ],
+)
+
+
+widget_defaults = widgets.init_widgets_defaults()
+extension_defaults = widget_defaults.copy()
+
+
+screens = [
+    Screen(
+        top=bar.Bar(
+            widgets=widgets.screen_widgets(primary=True),
+            size=20,
+            background="#00000000",
+            border_color="#00000000",
+            border_width=5,
+            opacity=1,
+            margin=0,
+        ),
+        wallpaper=wallpaper,
+        wallpaper_mode="fill",
+    ),
+    Screen(
+        top=bar.Bar(
+            widgets=widgets.screen_widgets(),
+            size=20,
+            background="#00000000",
+            border_color="#00000000",
+            border_width=5,
+            opacity=1,
+            margin=0,
+        ),
+        wallpaper=wallpaper,
+        wallpaper_mode="fill",
+    ),
+]
 
 
 @lazy.function
@@ -95,6 +231,7 @@ keys = [
     Key("M-<space>", lazy.next_layout()),
     Key("M-S-c", lazy.window.kill(), desc="Kill focused window"),
     Key("M-C-r", lazy.restart(), desc="Restart Qtile"),
+    Key("M-S-r", lazy.reload_config(), "Reload Qtile Config"),
     Key("M-S-C-q", lazy.shutdown(), desc="Shutdown Qtile"),
     Key("M-<period>", lazy.next_screen()),
     Key("M-<comma>", lazy.prev_screen()),
@@ -104,26 +241,14 @@ keys = [
 ]
 
 
-layout_theme = {
-    "border_width": 2,
-    "margin": 8,
-    "border_focus": "e1acff",
-    "border_normal": "1D2330",
-}
-
 COLOR_BG = "#161F38"
 COLOR_FG = "#FFFFFF"
 
-layouts = [
-    layout.Tile(name="tile", ratio=0.5, **layout_theme),
-    layout.Max(name="max"),
-]
 
 groups = [
     Group(name="1"),
     Group(
         name="2",
-        layout="max",
         matches=[
             Match(wm_instance_class=["emacs"], wm_class=["Emacs"]),
             Match(wm_class=["kitty_emacs_window"]),
@@ -137,7 +262,6 @@ groups = [
     Group(name="8"),
     Group(
         name="9",
-        layout="max",
         matches=[
             Match(wm_class=["firefox-default"]),
         ],
@@ -145,15 +269,6 @@ groups = [
     ScratchPad(
         "scratchpad",
         [
-            DropDown(
-                "term",
-                ["kitty"],
-                height=0.8,
-                width=0.8,
-                x=0.1,
-                y=0.1,
-                opacity=0.95,
-            ),
             DropDown(
                 "telegram",
                 ["/usr/bin/telegram"],
@@ -167,24 +282,15 @@ groups = [
                 on_focus_lost_hide=False,
             ),
             DropDown(
-                "pavu",
-                ["/usr/bin/pavucontrol"],
-                height=0.5,
-                width=0.5,
-                x=0.25,
-                y=0.25,
-                opacity=1,
-                warp_pointer=True,
-            ),
-            DropDown(
                 "thunderbird",
                 ["/usr/bin/thunderbird"],
-                match=Match(wm_class=["Thunderbird"]),
+                match=Match(wm_class=["thunderbird-default"]),
                 height=0.98,
                 width=0.9,
                 x=0.05,
                 y=0.01,
                 opacity=0.95,
+                on_focus_lost_hide=False,
             ),
         ],
     ),
@@ -199,7 +305,6 @@ keys.append(
             Key(
                 "M-t",
                 lazy.group["scratchpad"].dropdown_toggle("thunderbird"),
-                lazy.widget["checkmails"].eval("self.update(self.poll())"),
             ),
             Key("M-s", lazy.group["scratchpad"].dropdown_toggle("telegram")),
         ],
@@ -210,28 +315,6 @@ for k, group in zip(["1", "2", "3", "4", "5", "6", "7", "8", "9"], groups):
     keys.append(Key("M-" + (k), lazy.group[group.name].toscreen()))
     keys.append(Key("M-S-" + (k), lazy.window.togroup(group.name, switch_group=True)))
     keys.append(Key("M-C-" + (k), lazy.window.togroup(group.name, switch_group=False)))
-
-
-widget_defaults = dict(
-    font="monospace",
-    fontsize=14,
-    padding=3,
-)
-extension_defaults = widget_defaults.copy()
-
-
-colors = [
-    ["#282c34", "#282c34"],
-    ["#1c1f24", "#1c1f24"],
-    ["#dfdfdf", "#dfdfdf"],
-    ["#ff6c6b", "#ff6c6b"],
-    ["#98be65", "#98be65"],
-    ["#da8548", "#da8548"],
-    ["#51afef", "#51afef"],
-    ["#c678dd", "#c678dd"],
-    ["#46d9ff", "#46d9ff"],
-    ["#a9a1e1", "#a9a1e1"],
-]
 
 
 checkmail_widget = widget.GenPollText(
@@ -248,132 +331,6 @@ checkmail_widget = widget.GenPollText(
     },
 )
 
-
-def init_widgets_list():
-    widgets_list = [
-        widget.GroupBox(
-            font="Ubuntu Bold",
-            fontsize=9,
-            margin_y=3,
-            margin_x=0,
-            padding_y=5,
-            padding_x=3,
-            borderwidth=3,
-            active=colors[2],
-            inactive=colors[7],
-            rounded=False,
-            highlight_color=colors[1],
-            highlight_method="line",
-            this_current_screen_border=colors[6],
-            this_screen_border=colors[4],
-            other_current_screen_border=colors[6],
-            other_screen_border=colors[4],
-            foreground=colors[2],
-            background=colors[0],
-        ),
-        widget.TextBox(
-            text="|",
-            font="Ubuntu Mono",
-            background=colors[0],
-            foreground="474747",
-            padding=2,
-            fontsize=14,
-        ),
-        widget.CurrentLayoutIcon(
-            custom_icon_paths=[os.path.expanduser(f"{HOME}/.config/qtile/icons")],
-            foreground=colors[2],
-            background=colors[0],
-            padding=0,
-            scale=0.7,
-        ),
-        widget.CurrentLayout(foreground=colors[2], background=colors[0], padding=5),
-        widget.TextBox(
-            text="|",
-            font="Ubuntu Mono",
-            background=colors[0],
-            foreground="474747",
-            padding=2,
-            fontsize=14,
-        ),
-        widget.WindowName(foreground=colors[6], background=colors[0], padding=0),
-        widget.Sep(linewidth=0, padding=6, foreground=colors[0], background=colors[0]),
-        widget.Systray(background=colors[0], padding=5),
-        checkmail_widget,
-        widget.ThermalSensor(
-            foreground=colors[1],
-            background=colors[4],
-            threshold=90,
-            fmt="Temp: {}",
-            padding=5,
-        ),
-        widget.Memory(
-            foreground=colors[1],
-            background=colors[6],
-            fmt="Mem: {}",
-            padding=5,
-            update_interval=2,
-        ),
-        widget.Volume(
-            foreground=colors[1], background=colors[7], fmt="Vol: {}", padding=5
-        ),
-        widget.KeyboardLayout(
-            configured_keyboards=["us", "ru phonetic"],
-            option="",
-            foreground=colors[1],
-            background=colors[8],
-            fmt="Keyboard: {}",
-            padding=5,
-        ),
-        widget.Clock(
-            foreground=colors[1], background=colors[9], format="%A, %B %d - %H:%M "
-        ),
-    ]
-    return widgets_list
-
-
-screens = [
-    Screen(
-        top=bar.Bar(widgets=init_widgets_list(), opacity=1.0, size=20),
-        wallpaper=wallpaper,
-        wallpaper_mode="fill",
-    ),
-    Screen(
-        top=bar.Bar(widgets=init_widgets_list(), opacity=1.0, size=20),
-        wallpaper=wallpaper,
-        wallpaper_mode="fill",
-    ),
-]
-
-mouse = [
-    Drag(
-        [mod],
-        "Button1",
-        lazy.window.set_position_floating(),
-        start=lazy.window.get_position(),
-    ),
-    Drag(
-        [mod], "Button3", lazy.window.set_size_floating(), start=lazy.window.get_size()
-    ),
-    Click([mod], "Button2", lazy.window.toggle_floating()),
-]
-
-floating_layout = layout.Floating(
-    border_width=3,
-    border_focus="#FF0000",
-    border_normal="#000000",
-    fullscreen_border_width=0,
-    max_border_width=0,
-    float_rules=[
-        *layout.Floating.default_float_rules,
-        Match(wm_class="confirmreset"),  # gitk
-        Match(wm_class="makebranch"),  # gitk
-        Match(wm_class="maketag"),  # gitk
-        Match(wm_class="ssh-askpass"),  # ssh-askpass
-        Match(wm_class="graphics"),
-        Match(title="branchdialog"),  # gitk
-        Match(title="pinentry"),  # GPG key password entry
-    ],
-)
 
 # dgroups_key_binder = None
 # dgroups_app_rules = []
