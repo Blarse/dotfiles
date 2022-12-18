@@ -1,7 +1,7 @@
 [user]
 	name = Egor Ignatov
 	email = egori@altlinux.org
-	signingkey = DB21C97B6BDF202A
+	signingkey = A1EFF19859CBDC0B!
 [commit]
 	gpgsign = true
 [alias]
