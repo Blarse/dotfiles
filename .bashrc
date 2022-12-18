@@ -1,3 +1,5 @@
+export _BASH_LOADED_BASHRC
+
 # ~/.bashrc
 # The individual per-interactive-shell startup file.
 
@@ -29,12 +31,14 @@ alias diff='diff --color=auto'
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
-alias dmesg='dmesg --color=always'
 alias ip='ip --color=auto'
 alias ssh='TERM=xterm ssh'
 alias snano='sudo nano'
 
+
+alias dmesg="dmesg --color=always || sudo dmesg --color=always"
 alias pydoc='pydoc3'
+alias gpg='gpg2'
 
 if which exa &>/dev/null; then
 	alias ls='exa -bhF --group-directories-first'
@@ -50,6 +54,8 @@ fi
 
 alias cal='cal -m'
 
+alias mon='autorandr -c --match-edid'
+
 alias mkdir='mkdir -pv'
 alias mv='mv -iv'
 alias rm='rm -I'
@@ -62,8 +68,11 @@ alias rm='rm -I'
 
 alias icat='kitty +kitten icat'
 alias s='kitty +kitten ssh'
+alias @='kitty @'
+complete -o nospace -F _ksi_completions @
 . /usr/share/bash-completion/completions/ssh
 complete -F _ssh s
+
 
 # Use zoxide as cd
 which zoxide &>/dev/null && eval "$(zoxide init bash --cmd cd)"
@@ -79,6 +88,7 @@ alias df='df -h'
 # (-_-)
 alias sl='ls'
 alias dc='cd'
+alias sg='gs'
 alias suod='sudo'
 alias usdo='sudo'
 alias usod='sudo'
@@ -112,12 +122,7 @@ fi
 
 #Keychain gpg agent setup
 if [ ${WITH_GPG_AGENT:-0} -ne 0 ]; then
-	unset SSH_AGENT_PID
-	if [ "${gnupg_SSH_AUTH_SOCK_by:-0}" -ne $$ ]; then
-		export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
-	fi
-
-	eval $(keychain --agents gpg --eval --noask --quiet --nogui basealt 2> /dev/null)
+	eval $(keychain --gpg2 --agents gpg,ssh --systemd --eval --noask --quiet --nogui 2> /dev/null)
 
 	export GPG_TTY=$(tty)
 	gpg-connect-agent updatestartuptty /bye >/dev/null

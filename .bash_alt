@@ -23,6 +23,15 @@ function taskff {
     firefox "http://git.altlinux.org/tasks/$taskid"
 }
 
+function taskfzf {
+	\ssh gyle -- "task ls $@" | fzf | grep -Eo '(#|id=)[0-9]{6}' | tr -cd '[:digit:]'
+}
+
+function taskfff {
+    taskff $(taskfzf "$@")
+}
+
+
 alias gitery='ssh gitery'
 
 alias upgrade='sudo apt-get update && sudo apt-get dist-upgrade'
