@@ -42,11 +42,19 @@
   :bind (("M-x" . counsel-M-x)
 	 ("C-x b" . counsel-ibuffer)
 	 ("C-x C-f" . counsel-find-file)
+	 ("C-c c" . counsel-compile)
 	 :map minibuffer-local-map
-	 ("C-r" . 'counsel-minibuffer-history))
+	 ("C-r" . 'counsel-minibuffer-history)
+	 :map counsel-find-file-map
+	 ("C-l" . 'counsel-up-directory)
+	 :map ivy-minibuffer-map
+	 ("C-l" . 'counsel-up-directory))
   :config
   (ivy-mode 1)
   )
+
+(use-package ivy-prescient
+  :init (ivy-prescient-mode))
 
 (use-package ivy-rich
   :init (ivy-rich-mode 1))
@@ -67,6 +75,7 @@
 (setq projectile-project-search-path
       '(("~/data/dev/" . 2)
 	("~/alt/gears/" . 1)
+	("~/alt/fuzzing/" . 1)
 	("~/data/projects/" . 1))
       )
 
@@ -97,6 +106,9 @@
 (use-package dired
   :straight nil
   :ensure nil
+  :bind (:map dired-mode-map
+	      ("b" . dired-up-directory)
+	      ("M-<return>" . dired-find-file-other-window))
   :commands (dired dired-jump)
   :custom ((dired-listing-switches "-al --group-directories-first")))
 
@@ -165,11 +177,17 @@ point reaches the beginning or end of the buffer, stop there."
 ;; font
 					;(set-face-attribute 'default nil :font "" :height 90)
 
-
 ;; mod line
 (size-indication-mode)
 ;;(display-time)
 ;;(setq display-time-day-and-date nil)
+
+;; parens pairing
+(electric-pair-mode 'toggle)
+(setq electric-pair-preserve-balance nil
+      electric-pair-delete-adjacent-pairs t
+      electric-pair-open-newline-between-pairs nil
+      electric-pair-skip-whitespace 'chomp)
 
 
 ;; backups(file~) and auto-save(#file#)
@@ -211,8 +229,7 @@ point reaches the beginning or end of the buffer, stop there."
 
 (use-package persistent-scratch)
 (persistent-scratch-setup-default)
-
-
+(with-current-buffer "*scratch*" (persistent-scratch-mode))
 
 
 (add-hook 'dired-mode-hook
@@ -253,12 +270,32 @@ point reaches the beginning or end of the buffer, stop there."
   (company-idle-delay 0.0))
 
 
-
 ;;(use-package dap)
 
 
 ;; c
-;;todo: formatting
+(setq fill-column 109
+      tab-width 4
+      c-basic-offset 4
+      indent-tabs-mode nil
+      fill-column 80
+      )
+
+;; rust
+(use-package rust-mode)
 
 ;; python
-  
+(use-package python-black)
+
+;; yaml
+(use-package yaml-mode)
+
+;; docker
+(use-package dockerfile-mode)
+(put 'upcase-region 'disabled nil)
+
+
+(use-package org)
+;; org-roam
+(use-package org-roam)
+
