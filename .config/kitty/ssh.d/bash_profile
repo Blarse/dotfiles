@@ -1,0 +1,12 @@
+#!/bin/bash
+
+export TERMINAL=kitty
+export EDITOR=nano
+#export PATH="/home/egori/.scripts:$PATH:$HOME/.local/bin:/sbin"
+export PATH="$PATH:$HOME/.local/share/kitty-ssh-kitten/bin/"
+#export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+
+# Source the aliases and functions.
+if [ -f ~/.bashrc ]; then
+	. ~/.bashrc
+fi
