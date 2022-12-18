@@ -1,0 +1,4 @@
+packager="`rpm --eval %packager`"
+known_mountpoints=/proc,/dev/pts,/dev/shm,/dev/kvm
+mount=/proc
+install_resolver_configuration_files=yes
