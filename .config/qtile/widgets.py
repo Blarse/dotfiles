@@ -1,13 +1,14 @@
-from qtile_extras import widget
-from qtile_extras.widget.decorations import RectDecoration
+# from qtile_extras import widget
+from libqtile import widget
+
+# from qtile_extras.widget.decorations import RectDecoration
 
 import os
-
 
 HOME = os.path.expanduser("~")
 theme = dict(
     foreground="#e8eaf0",
-    background="#2a2d36",
+    background="#000000",
     color0="#9cb27d",  # light green
     color1="#cf868a",  # red
     color2="#4c2061",  # purple
@@ -30,171 +31,125 @@ colors = [theme[f"color{n}"] for n in range(16)]
 background = theme["background"]
 foreground = theme["foreground"]
 
-groupbox = [
-    widget.GroupBox(
-        font="Ubuntu Bold",
-        fontsize=9,
-        margin_y=3,
-        margin_x=0,
-        padding_y=5,
-        padding_x=3,
-        borderwidth=3,
-        active=foreground,
-        inactive=colors[4],
-        rounded=False,
-        highlight_color=colors[1],
-        highlight_method="line",
-        this_current_screen_border=colors[0],
-        this_screen_border=colors[1],
-        other_current_screen_border=colors[0],
-        other_screen_border=colors[1],
-    ),
-    widget.GroupBox(
-        font="Ubuntu Bold",
-        fontsize=9,
-        margin_y=3,
-        margin_x=0,
-        padding_y=5,
-        padding_x=3,
-        borderwidth=3,
-        active=foreground,
-        inactive=colors[4],
-        rounded=False,
-        highlight_color=colors[1],
-        highlight_method="line",
-        this_current_screen_border=colors[0],
-        this_screen_border=colors[1],
-        other_current_screen_border=colors[0],
-        other_screen_border=colors[1],
-    ),
-]
 
 current_layout_indicator = []
 
 
-def init_widgets_defaults():
-    return dict(font="Hack Nerd", fontsize=16, padding=6)
+class MyVolume(widget.Volume):
+    def _update_drawer(self):
+        if self.volume <= 0:
+            self.text = "婢"
+        elif self.volume <= 15:
+            self.text = f" {self.volume}%"
+        elif self.volume < 50:
+            self.text = f" {self.volume}%"
+        else:
+            self.text = f" {self.volume}%"
 
 
-widget_defaults = init_widgets_defaults()
+widget_defaults = dict(
+    font="Ubuntu Nerd Font Bold",
+    fontsize=14,
+    foreground="#FFFFFF",
+    background=None,
+    padding=2,
+)
 
-cust_spacer = widget.Spacer(length=5)
+graph_widget_defaults = dict(
+    border_width=1,
+    line_width=2,
+    margin_x=0,
+    margin_y=3,
+    samples=100,
+    graph_color="#ffffff",
+    fill_color="aaaaaa",
+    width=64,
+)
 
+spacer = widget.Spacer(length=5)
+pomodoro = widget.Pomodoro()
 
 def screen_widgets(primary=False):
     widget_list = [
-        cust_spacer,
+        spacer,
         widget.GroupBox(
+            disable_drag=True,
             margin_y=3,
             margin_x=10,
             padding_y=0,
             padding_x=8,
             borderwidth=1,
-            disable_drag=True,
-            active=colors[12],
-            inactive=colors[3],
             rounded=True,
+            highlight_method="line",
+            highlight_color="#555555",
+            active="#cccccc",
+            inactive="#999999",
+            block_highlight_text_color="#FF0000",
             this_current_screen_border=colors[9],
-            foreground=colors[3],
-            decorations=[
-                RectDecoration(colour=background, radius=10, filled=True, padding_y=0)
-            ],
         ),
-        # widget.GroupBox(
-        #     margin_y=3,
-        #     margin_x=10,
-        #     padding_y=0,
-        #     padding_x=8,
-        #     borderwidth=1,
-        #     disable_drag=True,
-        #     active=colors[12],
-        #     inactive=colors[3],
-        #     rounded=True,
-        #     this_current_screen_border=colors[9],
-        #     foreground=colors[3],
-        #     decorations=[
-        #         RectDecoration(colour=background, radius=10, filled=True, padding_y=0)
-        #     ],
-        # ),
-        widget.WindowName(font="Hack Nerd Bold", foreground=background),
-#        widget.Spacer(),
-        widget.Spacer(length=256),
-        # TODO: brightness, keyboard layout, datetime
+        widget.WindowName(),
+        # widget.WindowCount(),
+        # widget.TaskList(),
+        widget.Spacer(length=0),
+        widget.Chord(),
         widget.CurrentLayoutIcon(
             custom_icon_paths=[os.path.expanduser(f"{HOME}/.config/qtile/icons")],
             scale=0.65,
-            decorations=[
-                RectDecoration(
-                    colour=background, radius=[10, 0, 0, 10], filled=True, padding_y=0
-                )
-            ],
         ),
-        widget.CurrentLayout(
-            width=64,
-            padding=0,
-            fmt="{}",
-            decorations=[
-                RectDecoration(
-                    colour=background, radius=[0, 10, 10, 0], filled=True, padding_y=0
-                )
-            ],
-        ),
-        cust_spacer,
+        widget.CurrentLayout(),
+        spacer,
+        pomodoro,
+        spacer,
+        widget.TextBox("", fontsize=20),
+        widget.CPUGraph(**graph_widget_defaults),
+        spacer,
+        widget.TextBox("", fontsize=20),
+        widget.MemoryGraph(**graph_widget_defaults),
+        spacer,
+        widget.TextBox("", fontsize=20),
+        widget.HDDBusyGraph(**graph_widget_defaults),
+        spacer,
         widget.Battery(
-            foreground=colors[3],
-            format=" {percent:2.0%}",
-            update_interval=1,
-            decorations=[
-                RectDecoration(colour=background, radius=10, filled=True, padding_y=0)
-            ],
+            charge_char="",
+            discharge_char="",
+            empty_char="",
+            full_char="",
+            unknown_char="",
+            show_short_text=False,
+            format="[{char} {percent:2.0%}]",
+            update_interval=30,
         ),
-        cust_spacer,
-        cust_spacer,
-        widget.CPU(
-            foreground=colors[0],
-            format=" {load_percent}%",
-            update_interval=1,
-            decorations=[
-                RectDecoration(colour=background, radius=10, filled=True, padding_y=0)
-            ],
-        ),
-        cust_spacer,
-        widget.Memory(
-            foreground=colors[1],
-            format=" {MemUsed: .1f}{mm}/{MemTotal: .1f}{mm}",
-            measure_mem="G",
-            decorations=[
-                RectDecoration(colour=background, radius=10, filled=True, padding_y=0)
-            ],
-        ),
-        cust_spacer,
+        spacer,
         widget.ThermalSensor(
-            foreground="#00FF00",
             foreground_alert="#FF0000",
             threshold=70,
-            fmt=" {}",
-            decorations=[
-                RectDecoration(colour=background, radius=10, filled=True, padding_y=0)
-            ],
+            fmt="[{}]",
         ),
-        cust_spacer,
-        widget.Volume(  # TODO
-            foreground=colors[3],
-            fmt="墳: {}",
+        spacer,
+        widget.Backlight(
+            backlight_name=os.listdir("/sys/class/backlight")[0],
+            step=1,
+            update_interval=30,
+            format="[{percent:5.0%}]",
+            change_command=None,
+        ),
+        spacer,
+        MyVolume(
+            cardid="0",
+            channel="PCM",
+            step=1,
+            # volume_up_command="amixer -c 0 set PCM 3%+",
+            # volume_down_command="amixer -c 0 set PCM 3%-",
+            # get_volume_command="",
+            # mute_command="amixer -c 0 set PCM 3%-",
+            volume_app="kitty --name dialog alsamixer",
+            fmt="[{}]",
             scroll=True,
-            decorations=[
-                RectDecoration(colour=background, radius=10, filled=True, padding_y=0)
-            ],
         ),
-        cust_spacer,
+        spacer,
         widget.Clock(
-            format="%l:%M %p",
-            foreground=foreground,
-            decorations=[
-                RectDecoration(colour=background, radius=10, filled=True, padding_y=0)
-            ],
+            format="[%l:%M %p]",
         ),
-
     ]
 
     if primary:

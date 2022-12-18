@@ -43,9 +43,14 @@ from libqtile.config import (
     KeyChord,
 )
 from libqtile.lazy import lazy
-from libqtile.utils import guess_terminal
+from libqtile.utils import guess_terminal, send_notification
 
 from libqtile.log_utils import logger
+
+from libqtile.widget.backlight import ChangeDirection
+from libqtile.widget.battery import Battery, BatteryState
+
+from random import randint
 
 import os
 import subprocess
@@ -65,8 +70,8 @@ terminal = guess_terminal("kitty")
 browser = "firefox"
 
 HOME = os.path.expanduser("~")
-# wallpaper = "/usr/share/wallpapers/AltEmeraldBlueStream/contents/images/3840x2160.png"
-wallpaper = "/usr/share/wallpapers/AltMorningMist/contents/images/3840x2160.png"
+# wallpaper = "/usr/share/wallpapers/AltMorningMist/contents/images/3840x2160.png"
+wallpaper = None
 
 theme = dict(
     foreground="#FFC745",
@@ -157,7 +162,7 @@ floating_layout = layout.Floating(
 )
 
 
-widget_defaults = widgets.init_widgets_defaults()
+widget_defaults = widgets.widget_defaults
 extension_defaults = widget_defaults.copy()
 
 
@@ -165,10 +170,10 @@ screens = [
     Screen(
         top=bar.Bar(
             widgets=widgets.screen_widgets(primary=True),
-            size=20,
-            background="#00000000",
-            border_color="#00000000",
-            border_width=5,
+            size=24,
+            background="#000000",
+            border_color="#000000",
+            border_width=0,
             opacity=1,
             margin=0,
         ),
@@ -178,10 +183,10 @@ screens = [
     Screen(
         top=bar.Bar(
             widgets=widgets.screen_widgets(),
-            size=20,
-            background="#00000000",
-            border_color="#00000000",
-            border_width=5,
+            size=24,
+            background="#000000",
+            border_color="#000000",
+            border_width=0,
             opacity=1,
             margin=0,
         ),
@@ -189,6 +194,11 @@ screens = [
         wallpaper_mode="fill",
     ),
 ]
+
+
+@lazy.function
+def _send_notification(qtile, title, message, id=None):
+    send_notification(title, f"{randint(10, 1000)} {message}", id_=id)
 
 
 @lazy.function
@@ -226,7 +236,7 @@ keys = [
         lazy.spawn("rofi -monitor -1 -show combi"),
         desc="Spawn rofi application launcher",
     ),
-    Key("M-<Return>", lazy.spawn(terminal), desc="Launch terminal"),
+    Key("M-<Return>", lazy.spawn("/usr/bin/kitty -1"), desc="Launch terminal"),
     Key("M-<Tab>", lazy.screen.toggle_group(), desc="Toggle between last groups"),
     Key("M-<space>", lazy.next_layout()),
     Key("M-S-c", lazy.window.kill(), desc="Kill focused window"),
@@ -238,12 +248,39 @@ keys = [
     Key("M-S-<period>", window_to_next_screen),
     Key("M-S-<comma>", window_to_prev_screen),
     Key("M-i", lazy.spawn("slock"), desc="Lock screen"),
+    Key(
+        "<XF86MonBrightnessDown>",
+        lazy.widget["backlight"].change_backlight(ChangeDirection.DOWN, 1),
+        lazy.widget["backlight"].eval("self.update(self.poll())"),
+    ),
+    Key(
+        "<XF86MonBrightnessUp>",
+        lazy.widget["backlight"].change_backlight(ChangeDirection.UP, 1),
+        lazy.widget["backlight"].eval("self.update(self.poll())"),
+    ),
+    Key(
+        "M-<F1>",
+        lazy.widget["backlight"].change_backlight(ChangeDirection.DOWN, 1),
+        lazy.widget["backlight"].eval("self.update(self.poll())"),
+    ),
+    Key(
+        "M-<F2>",
+        lazy.widget["backlight"].change_backlight(ChangeDirection.UP, 1),
+        lazy.widget["backlight"].eval("self.update(self.poll())"),
+    ),
+    Key(
+        "<XF86AudioMute>",
+        lazy.widget["myvolume"].mute(),
+    ),
+    Key(
+        "<XF86AudioRaiseVolume>",
+        lazy.widget["myvolume"].increase_vol(),
+    ),
+    Key(
+        "<XF86AudioLowerVolume>",
+        lazy.widget["myvolume"].decrease_vol(),
+    ),
 ]
-
-
-COLOR_BG = "#161F38"
-COLOR_FG = "#FFFFFF"
-
 
 groups = [
     Group(name="1"),
